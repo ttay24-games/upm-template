@@ -81,6 +81,9 @@ popd > /dev/null
 
 echo "All tests passed successfully!"
 
+# Wait for user to inspect the results
+read -rp "Tests passed. Press [Enter] to clean up the test environment, or Ctrl+C to keep it: "
+
 # Cleanup
 rm -rf "$TEST_DIR"
 echo "Test environment cleaned up."

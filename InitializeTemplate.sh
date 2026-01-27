@@ -375,6 +375,11 @@ if [[ -d "$assets_path" ]]; then
   popd >/dev/null || true
 fi
 
+# Remove the test script
+if [[ -f ./TestInitializeTemplate.sh ]]; then
+  rm -f ./TestInitializeTemplate.sh
+fi
+
 # Remove this script
 if [[ -f ./InitializeTemplate.sh ]]; then
   rm -f ./InitializeTemplate.sh
