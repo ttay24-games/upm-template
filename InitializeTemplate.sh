@@ -32,10 +32,25 @@ if [[ -z "$InputOrganization" || -z "${InputOrganization// }" ]]; then
   InputOrganization="${InputName}" # Default to InputName if none provided
 fi
 
+read -rp "Enter the Git Repository URL for your project: (i.e. https://github.com/ProjectAuthor/com.projectscope.projectname.git) " InputRepository
+if [[ -z "$InputRepository" ]]; then
+  echo "Repository URL cannot be empty"
+  exit 1
+fi
+
 ProjectAuthor="ProjectAuthor"
 ProjectName="ProjectName"
 ProjectScope="ProjectScope."
 ProjectOrganization="ProjectOrganization"
+ProjectRepository="https://github.com/ProjectAuthor/com.projectscope.projectname.git"
+
+# Derived URLs
+ProjectDocumentationUrl="https://github.com/ProjectAuthor/com.projectscope.projectname#documentation"
+ProjectChangelogUrl="https://github.com/ProjectAuthor/com.projectscope.projectname/releases"
+
+InputRepositoryNoGit="${InputRepository%.git}"
+InputDocumentationUrl="${InputRepositoryNoGit}#documentation"
+InputChangelogUrl="${InputRepositoryNoGit}/releases"
 
 # Announce
 echo "Your new com.$(echo "${InputScope}" | tr '[:upper:]' '[:lower:]')$(echo "${InputName}" | tr '[:upper:]' '[:lower:]') project is being created..."
@@ -45,6 +60,7 @@ if [[ "${InputOrganization}" != "${InputName}" ]]; then
 fi
 echo "Project Name: ${InputName}"
 echo "Project Scope: ${InputScope}"
+echo "Repository: ${InputRepository}"
 
 oldPackageRoot="./${ProjectScope}${ProjectName}/Packages/com.$(echo "${ProjectScope}" | tr '[:upper:]' '[:lower:]')$(echo "${ProjectName}" | tr '[:upper:]' '[:lower:]')"
 
@@ -172,6 +188,30 @@ while IFS= read -r -d '' file; do
     # Read file content
     content=$(<"${file}")
 
+    # Replace ProjectRepository upm link
+    if grep -q "${ProjectRepository}#upm" <<< "${content}"; then
+      content="${content//${ProjectRepository}#upm/${InputRepository}#upm}"
+      updated=true
+    fi
+
+    # Replace ProjectRepository -> InputRepository
+    if grep -q "${ProjectRepository}" <<< "${content}"; then
+      content="${content//${ProjectRepository}/${InputRepository}}"
+      updated=true
+    fi
+
+    # Replace ProjectDocumentationUrl -> InputDocumentationUrl
+    if grep -q "${ProjectDocumentationUrl}" <<< "${content}"; then
+      content="${content//${ProjectDocumentationUrl}/${InputDocumentationUrl}}"
+      updated=true
+    fi
+
+    # Replace ProjectChangelogUrl -> InputChangelogUrl
+    if grep -q "${ProjectChangelogUrl}" <<< "${content}"; then
+      content="${content//${ProjectChangelogUrl}/${InputChangelogUrl}}"
+      updated=true
+    fi
+
     # Replace PascalCase ProjectName -> InputName
     if grep -q "${ProjectName}" <<< "${content}"; then
       content="${content//${ProjectName}/${InputName}}"
@@ -213,9 +253,11 @@ while IFS= read -r -d '' file; do
     # Replace lowercase project scope
     ProjectScopeLower=$(echo "${ProjectScope}" | tr '[:upper:]' '[:lower:]')
     InputScopeLower=$(echo "${InputScope}" | tr '[:upper:]' '[:lower:]')
-    if grep -q "${ProjectScopeLower}" <<< "${content}"; then
-      content="${content//${ProjectScopeLower}/${InputScopeLower}}"
-      updated=true
+    if [[ -n "${InputScopeLower}" ]]; then
+      if grep -q "${ProjectScopeLower}" <<< "${content}"; then
+        content="${content//${ProjectScopeLower}/${InputScopeLower}}"
+        updated=true
+      fi
     fi
 
     # Replace uppercase project name
@@ -229,9 +271,11 @@ while IFS= read -r -d '' file; do
     # Replace uppercase project scope
     ProjectScopeUpper=$(echo "${ProjectScope}" | tr '[:lower:]' '[:upper:]')
     InputScopeUpper=$(echo "${InputScope}" | tr '[:lower:]' '[:upper:]')
-    if grep -q "${ProjectScopeUpper}" <<< "${content}"; then
-      content="${content//${ProjectScopeUpper}/${InputScopeUpper}}"
-      updated=true
+    if [[ -n "${InputScopeUpper}" ]]; then
+      if grep -q "${ProjectScopeUpper}" <<< "${content}"; then
+        content="${content//${ProjectScopeUpper}/${InputScopeUpper}}"
+        updated=true
+      fi
     fi
 
     # Replace #INSERT_GUID_HERE# with a new GUID
