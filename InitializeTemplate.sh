@@ -38,7 +38,7 @@ ProjectScope="ProjectScope."
 ProjectOrganization="ProjectOrganization"
 
 # Announce
-echo "Your new com.${InputScope,,}${InputName,,} project is being created..."
+echo "Your new com.$(echo "${InputScope}" | tr '[:upper:]' '[:lower:]')$(echo "${InputName}" | tr '[:upper:]' '[:lower:]') project is being created..."
 echo "Author: ${InputAuthor}"
 if [[ "${InputOrganization}" != "${InputName}" ]]; then
   echo "Organization: ${InputOrganization}"
@@ -46,7 +46,7 @@ fi
 echo "Project Name: ${InputName}"
 echo "Project Scope: ${InputScope}"
 
-oldPackageRoot="./${ProjectScope}${ProjectName}/Packages/com.${ProjectScope,,}${ProjectName,,}"
+oldPackageRoot="./${ProjectScope}${ProjectName}/Packages/com.$(echo "${ProjectScope}" | tr '[:upper:]' '[:lower:]')$(echo "${ProjectName}" | tr '[:upper:]' '[:lower:]')"
 
 # Remove existing Readme.md if present at repo root
 if [[ -f ./Readme.md ]]; then
@@ -133,7 +133,7 @@ safe_rename "${oldPackageRoot}/Samples~/Demo/${ProjectScope}${ProjectName}.Demo.
 
 # Rename package folder
 if [[ -d "${oldPackageRoot}" ]]; then
-  newPackageName="com.${InputScope,,}${InputName,,}"
+  newPackageName="com.$(echo "${InputScope}" | tr '[:upper:]' '[:lower:]')$(echo "${InputName}" | tr '[:upper:]' '[:lower:]')"
   mv "${oldPackageRoot}" "./${ProjectScope}${ProjectName}/Packages/${newPackageName}"
   oldPackageRoot="./${ProjectScope}${ProjectName}/Packages/${newPackageName}"
 fi
@@ -203,26 +203,34 @@ while IFS= read -r -d '' file; do
     fi
 
     # Replace lowercase project name
-    if grep -q "${ProjectName,,}" <<< "${content}"; then
-      content="${content//${ProjectName,,}/${InputName,,}}"
+    ProjectNameLower=$(echo "${ProjectName}" | tr '[:upper:]' '[:lower:]')
+    InputNameLower=$(echo "${InputName}" | tr '[:upper:]' '[:lower:]')
+    if grep -q "${ProjectNameLower}" <<< "${content}"; then
+      content="${content//${ProjectNameLower}/${InputNameLower}}"
       updated=true
     fi
 
     # Replace lowercase project scope
-    if grep -q "${ProjectScope,,}" <<< "${content}"; then
-      content="${content//${ProjectScope,,}/${InputScope,,}}"
+    ProjectScopeLower=$(echo "${ProjectScope}" | tr '[:upper:]' '[:lower:]')
+    InputScopeLower=$(echo "${InputScope}" | tr '[:upper:]' '[:lower:]')
+    if grep -q "${ProjectScopeLower}" <<< "${content}"; then
+      content="${content//${ProjectScopeLower}/${InputScopeLower}}"
       updated=true
     fi
 
     # Replace uppercase project name
-    if grep -q "${ProjectName^^}" <<< "${content}"; then
-      content="${content//${ProjectName^^}/${InputName^^}}"
+    ProjectNameUpper=$(echo "${ProjectName}" | tr '[:lower:]' '[:upper:]')
+    InputNameUpper=$(echo "${InputName}" | tr '[:lower:]' '[:upper:]')
+    if grep -q "${ProjectNameUpper}" <<< "${content}"; then
+      content="${content//${ProjectNameUpper}/${InputNameUpper}}"
       updated=true
     fi
 
     # Replace uppercase project scope
-    if grep -q "${ProjectScope^^}" <<< "${content}"; then
-      content="${content//${ProjectScope^^}/${InputScope^^}}"
+    ProjectScopeUpper=$(echo "${ProjectScope}" | tr '[:lower:]' '[:upper:]')
+    InputScopeUpper=$(echo "${InputScope}" | tr '[:lower:]' '[:upper:]')
+    if grep -q "${ProjectScopeUpper}" <<< "${content}"; then
+      content="${content//${ProjectScopeUpper}/${InputScopeUpper}}"
       updated=true
     fi
 
@@ -268,7 +276,7 @@ assets_path="./${InputScope}${InputName}/Assets"
 if [[ -d "$assets_path" ]]; then
   pushd "$assets_path" >/dev/null || true
   # Relative path from Assets -> Packages (one directory up)
-  target="../Packages/com.${InputScope,,}${InputName,,}/Samples~"
+  target="../Packages/com.$(echo "${InputScope}" | tr '[:upper:]' '[:lower:]')$(echo "${InputName}" | tr '[:upper:]' '[:lower:]')/Samples~"
 
   # create symlink using cmd mklink on Windows, else use ln -s on POSIX
   isWindows=false
@@ -336,3 +344,4 @@ if command -v unity-cli >/dev/null 2>&1; then
   }
 fi
 exit 0
+No newline at end of file
