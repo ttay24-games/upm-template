@@ -23,6 +23,7 @@ echo "Setting up test environment in $TEST_DIR..."
 # Copy project files to test environment
 cp -r ProjectScope.ProjectName "$TEST_DIR/"
 cp InitializeTemplate.sh "$TEST_DIR/"
+cp knope.toml "$TEST_DIR/"
 
 pushd "$TEST_DIR" > /dev/null
 

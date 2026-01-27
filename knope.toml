@@ -1,0 +1,3 @@
+package.versioned_files = ["ProjectScope.ProjectName/Packages/com.projectscope.projectname/package.json"]
+bot.releases.enabled = true
+package.changelog = "CHANGELOG.md"
