@@ -3,7 +3,7 @@
   "displayName": "ProjectScope.ProjectName",
   "description": "ProjectScope.ProjectName description goes here.",
   "keywords": [],
-  "version": "1.0.0-preview.1",
+  "version": "0.1.0",
   "unity": "2021.3",
   "documentationUrl": "https://github.com/ProjectAuthor/com.projectscope.projectname#documentation",
   "changelogUrl": "https://github.com/ProjectAuthor/com.projectscope.projectname/releases",
