@@ -58,7 +58,7 @@ if [[ ! -f "$PACKAGE_JSON" ]]; then
 fi
 
 grep -q "\"name\": \"${EXPECTED_PACKAGE_NAME}\"" "$PACKAGE_JSON" || { echo "FAILED: Incorrect name in package.json"; exit 1; }
-grep -q "\"repository\": \"${INPUT_REPO}\"" "$PACKAGE_JSON" || { echo "FAILED: Incorrect repository in package.json"; exit 1; }
+grep -q "\"repository\": \"${INPUT_REPO}\"" "$PACKAGE_JSON" || { echo "FAILED: Incorrect repository in package.json; expected \"${INPUT_REPO}\""; exit 1; }
 grep -q "\"name\": \"${INPUT_AUTHOR}\"" "$PACKAGE_JSON" || { echo "FAILED: Incorrect author name in package.json"; exit 1; }
 
 # 3. Check README.md content
@@ -68,7 +68,7 @@ if [[ ! -f "$README" ]]; then
     exit 1
 fi
 
-grep -q "${INPUT_REPO}#upm" "$README" || { echo "FAILED: Git URL in README.md not updated correctly"; exit 1; }
+grep -q "${INPUT_REPO}?path=${EXPECTED_PACKAGE_PATH}" "$README" || { echo "FAILED: Git URL in README.md not updated correctly; expected \"${INPUT_REPO}?path=${EXPECTED_PACKAGE_PATH}\""; exit 1; }
 grep -q "com.$(echo "${INPUT_SCOPE}" | tr '[:upper:]' '[:lower:]').$(echo "${INPUT_NAME}" | tr '[:upper:]' '[:lower:]')" "$README" || { echo "FAILED: Package name in README.md not updated correctly"; exit 1; }
 
 # 4. Check asmdef files

@@ -63,6 +63,7 @@ echo "Project Scope: ${InputScope}"
 echo "Repository: ${InputRepository}"
 
 oldPackageRoot="./${ProjectScope}${ProjectName}/Packages/com.$(echo "${ProjectScope}" | tr '[:upper:]' '[:lower:]')$(echo "${ProjectName}" | tr '[:upper:]' '[:lower:]')"
+gitInstallSuffix="${ProjectScope}${ProjectName}/Packages/com.$(echo "${ProjectScope}" | tr '[:upper:]' '[:lower:]')$(echo "${ProjectName}" | tr '[:upper:]' '[:lower:]')"
 
 # Remove existing Readme.md if present at repo root
 if [[ -f ./Readme.md ]]; then
@@ -190,7 +191,7 @@ while IFS= read -r -d '' file; do
 
     # Replace ProjectRepository upm link
     if grep -q "${ProjectRepository}#upm" <<< "${content}"; then
-      content="${content//${ProjectRepository}#upm/${InputRepository}#upm}"
+      content="${content//${ProjectRepository}/${InputRepository}?path=${gitInstallSuffix}}"
       updated=true
     fi
 
